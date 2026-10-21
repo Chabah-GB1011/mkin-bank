@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكين ميديا - منصة الوسائط والتفاعل</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: linear-gradient(135deg, #0d0f18, #1a1f36);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .navbar {
+            width: 100%; max-width: 850px;
+            display: flex; justify-content: space-around;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
+            padding: 12px; border-radius: 12px; margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .nav-link {
+            color: #a0aec0; text-decoration: none; font-weight: bold; padding: 8px 16px; border-radius: 8px; transition: 0.3s;
+        }
+        .nav-link:hover, .nav-link.active { background: #00d2ff; color: #000; }
+
+        .header-bar {
+            width: 100%; max-width: 850px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.05); padding: 15px 20px; border-radius: 12px;
+            margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .user-balance { color: #00ffcc; font-weight: bold; font-size: 1.2rem; }
+
+        .feed-container {
+            width: 100%; max-width: 850px;
+            display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .post-card {
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;
+            padding: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+        }
+
+        .post-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;
+        }
+        .author-name { color: #00d2ff; font-weight: bold; }
+        .post-time { color: #888; font-size: 0.8rem; }
+
+        .post-content { margin-bottom: 15px; line-height: 1.6; color: #ddd; }
+
+        .post-actions {
+            display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;
+        }
+
+        button {
+            padding: 8px 16px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s;
+        }
+        .like-btn { background: rgba(255,255,255,0.1); color: #fff; }
+        .like-btn:hover { background: rgba(255,255,255,0.2); }
+        .tip-btn { background: #00d2ff; color: #000; }
+        .tip-btn:hover { background: #00a8cc; }
+        .sub-btn { background: #28a745; color: #fff; }
+        .sub-btn:hover { background: #218838; }
+    </style>
+</head>
+<body>
+
+    <!-- شريط التنقل -->
+    <nav class="navbar">
+        <a href="bank.html" class="nav-link">البنك</a>
+        <a href="crypto.html" class="nav-link">العملات الرقمية</a>
+        <a href="store.html" class="nav-link">المتجر</a>
+        <a href="media.html" class="nav-link active">الوسائط</a>
+    </nav>
+
+    <!-- شريط الرصيد -->
+    <div class="header-bar">
+        <div>مرحباً، <strong id="user-name" style="color:#00d2ff;">مستخدم</strong></div>
+        <div>رصيدك البنكي: <span id="user-balance" class="user-balance">0.00</span> د.م</div>
+    </div>
+
+    <!-- تغذية المنشورات والوسائط -->
+    <div class="feed-container">
+
+        <!-- منشور 1 -->
+        <div class="post-card">
+            <div class="post-header">
+                <span class="author-name">مكين للتكنولوجيا والبرمجيات</span>
+                <span class="post-time">منذ ساعتين</span>
+            </div>
+            <p class="post-content">
+                نرحب بجميع المنضمين الجدد إلى منصة مكين البنكية والخدمات الذكية! تم تحديث خيارات التداول والدفع الفوري عبر كود QR بنجاح.
+            </p>
+            <div class="post-actions">
+                <button class="like-btn" onclick="this.textContent = '❤️ تم الإعجاب'">👍 إعجاب</button>
+                <button class="tip-btn" onclick="tipAuthor('مكين للتكنولوجيا', 50)">إرسال دعم (50 د.م)</button>
+            </div>
+        </div>
+
+        <!-- منشور 2 -->
+        <div class="post-card">
+            <div class="post-header">
+                <span class="author-name">قناة التحليلات المالية الحصرية</span>
+                <span class="post-time">منذ 5 ساعات</span>
+            </div>
+            <p class="post-content">
+                اشترك الآن في القناة الحصرية لتلقي إشارات التداول وتوصيات العملات الرقمية والتسويق الرقمي يومياً.
+            </p>
+            <div class="post-actions">
+                <button class="sub-btn" onclick="subscribeChannel('قناة التحليلات المالية', 100)">الاشتراك الفوري (100 د.م / شهرياً)</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentUserData = localStorage.getItem('mkin_current_user');
+
+            if (!currentUserData) {
+                alert("يرجى تسجيل الدخول أولاً!");
+                window.location.href = "index.html";
+                return;
+            }
+
+            currentUser = JSON.parse(currentUserData);
+            if (currentUser.balance === undefined) currentUser.balance = 105000;
+            if (!currentUser.history) currentUser.history = [];
+
+            updateUI();
+        });
+
+        function updateUI() {
+            document.getElementById('user-name').textContent = currentUser.name || "مستخدم مكين";
+            document.getElementById('user-balance').textContent = currentUser.balance.toFixed(2);
+            saveUserData();
+        }
+
+        function saveUserData() {
+            localStorage.setItem('mkin_current_user', JSON.stringify(currentUser));
+            let savedAccounts = JSON.parse(localStorage.getItem('mkin_db_accounts')) || {};
+            savedAccounts[currentUser.acc] = currentUser;
+            localStorage.setItem('mkin_db_accounts', JSON.stringify(savedAccounts));
+        }
+
+        // إرسال دعم مالي لكاتب المنشور
+        function tipAuthor(author, amount) {
+            if (currentUser.balance < amount) {
+                alert("رصيدك البنكي غير كافٍ لإرسال الدعم!");
+                return;
+            }
+
+            if (confirm(`هل ترغب في إرسال دعم بقيمة ${amount} د.م إلى [${author}]؟`)) {
+                currentUser.balance -= amount;
+                currentUser.history.push({
+                    type: 'transfer',
+                    desc: `إرسال دعم وسائط إلى: ${author}`,
+                    amount: amount
+                });
+
+                updateUI();
+                alert(`تم إرسال الدعم بنجاح! وخصم ${amount} د.م من حسابك البنكي.`);
+            }
+        }
+
+        // الاشتراك في القنوات
+        function subscribeChannel(channelName, price) {
+            if (currentUser.balance < price) {
+                alert("رصيدك البنكي غير كافٍ للاشتراك!");
+                return;
+            }
+
+            if (confirm(`هل تؤكد الاشتراك في [${channelName}] مقابل ${price} د.م؟`)) {
+                currentUser.balance -= price;
+                currentUser.history.push({
+                    type: 'transfer',
+                    desc: `اشتراك وسائط: ${channelName}`,
+                    amount: price
+                });
+
+                updateUI();
+                alert(`مبروك! تم تفعيل اشتراكك بنجاح في ${channelName}.`);
+            }
+        }
+    </script>
+</body>
+</html>

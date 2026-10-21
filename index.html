@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكين بنك - تسجيل الدخول</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0d0f18, #1a1f36);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #333;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        input::placeholder { color: #aaa; }
+        button {
+            background: #00d2ff;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            margin-top: 15px;
+        }
+        button:hover { background: #00a8cc; }
+        .hidden { display: none; }
+        a { color: #00d2ff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <!-- كارت تسجيل الدخول -->
+    <div id="loginCard" class="card">
+        <h2>تسجيل الدخول - مكين بنك</h2>
+        <input type="text" id="loginAcc" placeholder="رقم الحساب">
+        <input type="password" id="loginPass" placeholder="كلمة المرور">
+        <button onclick="submitLogin()">تسجيل الدخول</button>
+        <p style="text-align: center; font-size: 0.9rem; margin-top: 15px;">
+            ليس لديك حساب؟ <a href="#" onclick="switchCard('registerCard')">إنشاء حساب جديد</a>
+        </p>
+    </div>
+
+    <!-- كارت إنشاء حساب -->
+    <div id="registerCard" class="card hidden">
+        <h2>إنشاء حساب جديد</h2>
+        <input type="text" id="regName" placeholder="الاسم الكامل">
+        <input type="email" id="regEmail" placeholder="البريد الإلكتروني">
+        <input type="tel" id="regPhone" placeholder="رقم الهاتف">
+        <input type="text" id="regAcc" placeholder="رقم الحساب المطلوب">
+        <input type="password" id="regPass" placeholder="كلمة المرور">
+        <select id="regGender">
+            <option value="ذكر" style="color: #000;">ذكر</option>
+            <option value="أنثى" style="color: #000;">أنثى</option>
+        </select>
+        <button onclick="submitRegister()">إنشاء الحساب</button>
+        <p style="text-align: center; font-size: 0.9rem; margin-top: 15px;">
+            لديك حساب بالفعل؟ <a href="#" onclick="switchCard('loginCard')">تسجيل الدخول</a>
+        </p>
+    </div>
+
+    <script>
+        function switchCard(cardId) {
+            document.getElementById('loginCard').classList.add('hidden');
+            document.getElementById('registerCard').classList.add('hidden');
+            document.getElementById(cardId).classList.remove('hidden');
+        }
+
+        function submitRegister() {
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const acc = document.getElementById('regAcc').value.trim();
+            const pass = document.getElementById('regPass').value.trim();
+            const gender = document.getElementById('regGender').value;
+
+            if (!name || !acc || !pass) {
+                alert("يرجى ملء البيانات الأساسية (الاسم، رقم الحساب، وكلمة المرور)!");
+                return;
+            }
+
+            let savedAccounts = JSON.parse(localStorage.getItem('mkin_db_accounts')) || {};
+
+            savedAccounts[acc] = {
+                name: name,
+                email: email,
+                phone: phone,
+                acc: acc,
+                pass: pass,
+                gender: gender
+            };
+
+            localStorage.setItem('mkin_db_accounts', JSON.stringify(savedAccounts));
+            alert("تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.");
+            switchCard('loginCard');
+        }
+
+        function submitLogin() {
+            const acc = document.getElementById('loginAcc').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+
+            let savedAccounts = JSON.parse(localStorage.getItem('mkin_db_accounts')) || {};
+
+            if (!acc || !pass) {
+                alert("يرجى إدخال رقم الحساب وكلمة المرور!");
+                return;
+            }
+
+            if (!savedAccounts[acc] || savedAccounts[acc].pass !== pass) {
+                alert("رقم الحساب أو كلمة المرور غير صحيحة!");
+                return;
+            }
+
+            // حفظ بيانات المستخدم الحالي وتوجيهه لصفحة البنك
+            localStorage.setItem('mkin_current_user', JSON.stringify(savedAccounts[acc]));
+            window.location.href = 'bank.html';
+        }
+    </script>
+</body>
+</html>

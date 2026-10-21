@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر مكين - الشراء والدفع السريع</title>
+    <!-- مكتبة توليد كود QR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: linear-gradient(135deg, #0d0f18, #1a1f36);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .navbar {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .nav-link {
+            color: #a0aec0; text-decoration: none; font-weight: bold; padding: 8px 16px; border-radius: 8px; transition: 0.3s;
+        }
+        .nav-link:hover, .nav-link.active { background: #00d2ff; color: #000; }
+
+        .header-bar {
+            width: 100%; max-width: 900px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.05); padding: 15px 20px; border-radius: 12px;
+            margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .user-balance { color: #00ffcc; font-weight: bold; font-size: 1.2rem; }
+
+        .products-grid {
+            width: 100%; max-width: 900px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px; padding: 20px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            text-align: center; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+        }
+        .product-title { font-size: 1.2rem; margin-bottom: 10px; color: #00d2ff; }
+        .product-price { font-size: 1.5rem; color: #00ffcc; font-weight: bold; margin: 10px 0; }
+        
+        button {
+            width: 100%; padding: 10px; margin-top: 8px; border-radius: 8px; border: none;
+            background: #00d2ff; color: #000; font-weight: bold; cursor: pointer; transition: 0.2s;
+        }
+        button:hover { background: #00a8cc; }
+        .qr-btn { background: #28a745; color: #fff; }
+        .qr-btn:hover { background: #218838; }
+
+        /* نافذة كود QR للشراء */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            justify-content: center; align-items: center; z-index: 100;
+        }
+        .modal-content {
+            background: #1a1f36; padding: 25px; border-radius: 16px; text-align: center;
+            border: 1px solid rgba(255,255,255,0.2); max-width: 350px; width: 90%;
+        }
+        #modal-qr { background: white; padding: 10px; border-radius: 8px; margin: 15px auto; display: inline-block; }
+    </style>
+</head>
+<body>
+
+    <!-- شريط التنقل -->
+    <nav class="navbar">
+        <a href="bank.html" class="nav-link">البنك</a>
+        <a href="crypto.html" class="nav-link">العملات الرقمية</a>
+        <a href="store.html" class="nav-link active">المتجر</a>
+        <a href="media.html" class="nav-link">الوسائط</a>
+    </nav>
+
+    <!-- شريط معلومات المستخدم والرصيد -->
+    <div class="header-bar">
+        <div>مرحباً، <strong id="user-name" style="color:#00d2ff;">مستخدم</strong></div>
+        <div>رصيدك الحالي: <span id="user-balance" class="user-balance">0.00</span> د.م</div>
+    </div>
+
+    <!-- شبكة المنتجات -->
+    <div class="products-grid">
+        
+        <div class="product-card">
+            <div class="product-title">سماعات لاسلكية احترافية</div>
+            <p style="color:#aaa; font-size:0.9rem;">جودة صوت عالية ونقاء تام مع خاصية عزل الضوضاء.</p>
+            <div class="product-price">350.00 د.م</div>
+            <button onclick="buyProduct('سماعات لاسلكية احترافية', 350)">خصم مباشر من الحساب</button>
+            <button class="qr-btn" onclick="showProductQR('سماعات لاسلكية احترافية', 350)">الدفع عبر QR</button>
+        </div>
+
+        <div class="product-card">
+            <div class="product-title">ساعة ذكية - Mkin Smart</div>
+            <p style="color:#aaa; font-size:0.9rem;">تتبع النشاط الرياضي ومراقبة نبضات القلب والرسائل.</p>
+            <div class="product-price">600.00 د.م</div>
+            <button onclick="buyProduct('ساعة ذكية Mkin Smart', 600)">خصم مباشر من الحساب</button>
+            <button class="qr-btn" onclick="showProductQR('ساعة ذكية Mkin Smart', 600)">الدفع عبر QR</button>
+        </div>
+
+        <div class="product-card">
+            <div class="product-title">اشتراك VIP شهري</div>
+            <p style="color:#aaa; font-size:0.9rem;">وصول كامل لجميع الخدمات الحصرية على منصة مكين.</p>
+            <div class="product-price">120.00 د.م</div>
+            <button onclick="buyProduct('اشتراك VIP شهري', 120)">خصم مباشر من الحساب</button>
+            <button class="qr-btn" onclick="showProductQR('اشتراك VIP شهري', 120)">الدفع عبر QR</button>
+        </div>
+
+    </div>
+
+    <!-- نافذة كود QR للمنتج -->
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title">امسح الكود للدفع</h3>
+            <p id="modal-price" style="color:#00ffcc; font-weight:bold; margin-top:5px;"></p>
+            <div id="modal-qr"></div>
+            <p style="font-size:0.8rem; color:#aaa;">أدخل هذا الكود في صفحة البنك لإتمام الشراء</p>
+            <button onclick="closeModal()" style="background:#e53e3e; color:white; margin-top:15px;">إغلاق</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentUserData = localStorage.getItem('mkin_current_user');
+
+            if (!currentUserData) {
+                alert("يرجى تسجيل الدخول أولاً من الصفحة الرئيسية!");
+                window.location.href = "index.html";
+                return;
+            }
+
+            currentUser = JSON.parse(currentUserData);
+            if (currentUser.balance === undefined) currentUser.balance = 105000;
+            if (!currentUser.history) currentUser.history = [];
+
+            updateUI();
+        });
+
+        function updateUI() {
+            document.getElementById('user-name').textContent = currentUser.name || "مستخدم مكين";
+            document.getElementById('user-balance').textContent = currentUser.balance.toFixed(2);
+        }
+
+        function saveUserData() {
+            localStorage.setItem('mkin_current_user', JSON.stringify(currentUser));
+            let savedAccounts = JSON.parse(localStorage.getItem('mkin_db_accounts')) || {};
+            savedAccounts[currentUser.acc] = currentUser;
+            localStorage.setItem('mkin_db_accounts', JSON.stringify(savedAccounts));
+        }
+
+        // 1. الخصم المباشر لشراء المنتج
+        function buyProduct(title, price) {
+            if (currentUser.balance < price) {
+                alert("رصيدك البنكي غير كافٍ لإتمام الشراء!");
+                return;
+            }
+
+            if (confirm(`هل تؤكد شراء [${title}] بمبلغ ${price} د.م؟`)) {
+                currentUser.balance -= price;
+                currentUser.history.push({
+                    type: 'transfer',
+                    desc: `شراء من المتجر: ${title}`,
+                    amount: price
+                });
+
+                saveUserData();
+                updateUI();
+                alert(`تم الشراء بنجاح! تم خصم ${price} د.م من حسابك البنكي.`);
+            }
+        }
+
+        // 2. عرض كود QR الخاص بالمنتج
+        function showProductQR(title, price) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-price').textContent = `${price} د.م`;
+            
+            document.getElementById("modal-qr").innerHTML = "";
+            new QRCode(document.getElementById("modal-qr"), {
+                text: JSON.stringify({ product: title, amount: price, storeAcc: "MKIN_STORE_OFFICIAL" }),
+                width: 140,
+                height: 140
+            });
+
+            document.getElementById('qrModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('qrModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

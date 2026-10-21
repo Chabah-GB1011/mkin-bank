@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكين ك Crypto - التداول السريع</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: linear-gradient(135deg, #0d0f18, #1a1f36);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .navbar {
+            width: 100%; max-width: 900px;
+            display: flex; justify-content: space-around;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
+            padding: 12px; border-radius: 12px; margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .nav-link {
+            color: #a0aec0; text-decoration: none; font-weight: bold; padding: 8px 16px; border-radius: 8px; transition: 0.3s;
+        }
+        .nav-link:hover, .nav-link.active { background: #00d2ff; color: #000; }
+
+        .header-bar {
+            width: 100%; max-width: 900px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.05); padding: 15px 20px; border-radius: 12px;
+            margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .user-balance { color: #00ffcc; font-weight: bold; font-size: 1.2rem; }
+
+        .container {
+            width: 100%; max-width: 900px;
+            display: grid; grid-template-columns: 2fr 1fr; gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;
+            padding: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+        }
+
+        .crypto-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0, 0, 0, 0.2); padding: 12px 15px; border-radius: 10px;
+            margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .crypto-info h4 { color: #00d2ff; }
+        .crypto-price { font-weight: bold; color: #00ffcc; }
+
+        button {
+            padding: 8px 14px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s;
+        }
+        .buy-btn { background: #00d2ff; color: #000; margin-left: 5px; }
+        .buy-btn:hover { background: #00a8cc; }
+        .sell-btn { background: #e53e3e; color: #fff; }
+        .sell-btn:hover { background: #c53030; }
+
+        .wallet-item {
+            display: flex; justify-content: space-between; padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شريط التنقل -->
+    <nav class="navbar">
+        <a href="bank.html" class="nav-link">البنك</a>
+        <a href="crypto.html" class="nav-link active">العملات الرقمية</a>
+        <a href="store.html" class="nav-link">المتجر</a>
+        <a href="media.html" class="nav-link">الوسائط</a>
+    </nav>
+
+    <!-- شريط الرصيد -->
+    <div class="header-bar">
+        <div>مرحباً، <strong id="user-name" style="color:#00d2ff;">مستخدم</strong></div>
+        <div>رصيدك البنكي: <span id="user-balance" class="user-balance">0.00</span> د.م</div>
+    </div>
+
+    <div class="container">
+        
+        <!-- سوق العملات -->
+        <div class="card">
+            <h3 style="margin-bottom: 15px;">أسواق العملات الرقمية</h3>
+
+            <div class="crypto-item">
+                <div class="crypto-info">
+                    <h4>Bitcoin (BTC)</h4>
+                    <span class="crypto-price">650,000 د.م</span>
+                </div>
+                <div>
+                    <button class="buy-btn" onclick="tradeCrypto('BTC', 650000, 'buy')">شراء</button>
+                    <button class="sell-btn" onclick="tradeCrypto('BTC', 650000, 'sell')">بيع</button>
+                </div>
+            </div>
+
+            <div class="crypto-item">
+                <div class="crypto-info">
+                    <h4>Ethereum (ETH)</h4>
+                    <span class="crypto-price">35,000 د.م</span>
+                </div>
+                <div>
+                    <button class="buy-btn" onclick="tradeCrypto('ETH', 35000, 'buy')">شراء</button>
+                    <button class="sell-btn" onclick="tradeCrypto('ETH', 35000, 'sell')">بيع</button>
+                </div>
+            </div>
+
+            <div class="crypto-item">
+                <div class="crypto-info">
+                    <h4>Ripple (XRP)</h4>
+                    <span class="crypto-price">6.50 د.م</span>
+                </div>
+                <div>
+                    <button class="buy-btn" onclick="tradeCrypto('XRP', 6.50, 'buy')">شراء</button>
+                    <button class="sell-btn" onclick="tradeCrypto('XRP', 6.50, 'sell')">بيع</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- المحفظة الرقمية -->
+        <div class="card">
+            <h3 style="margin-bottom: 15px;">محفظتك الرقمية</h3>
+            <div id="walletDisplay">
+                <div class="wallet-item"><span>لا تملك عملات حالياً</span></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentUserData = localStorage.getItem('mkin_current_user');
+
+            if (!currentUserData) {
+                alert("يرجى تسجيل الدخول أولاً!");
+                window.location.href = "index.html";
+                return;
+            }
+
+            currentUser = JSON.parse(currentUserData);
+            if (currentUser.balance === undefined) currentUser.balance = 105000;
+            if (!currentUser.cryptoWallet) currentUser.cryptoWallet = { BTC: 0, ETH: 0, XRP: 0 };
+            if (!currentUser.history) currentUser.history = [];
+
+            updateUI();
+        });
+
+        function updateUI() {
+            document.getElementById('user-name').textContent = currentUser.name || "مستخدم مكين";
+            document.getElementById('user-balance').textContent = currentUser.balance.toFixed(2);
+
+            const walletDisplay = document.getElementById('walletDisplay');
+            walletDisplay.innerHTML = '';
+
+            let hasCoins = false;
+            for (let coin in currentUser.cryptoWallet) {
+                if (currentUser.cryptoWallet[coin] > 0) {
+                    hasCoins = true;
+                    const div = document.createElement('div');
+                    div.className = 'wallet-item';
+                    div.innerHTML = `<span>${coin}:</span> <strong>${currentUser.cryptoWallet[coin].toFixed(4)}</strong>`;
+                    walletDisplay.appendChild(div);
+                }
+            }
+
+            if (!hasCoins) {
+                walletDisplay.innerHTML = '<div class="wallet-item"><span>لا تملك عملات حالياً</span></div>';
+            }
+
+            saveUserData();
+        }
+
+        function saveUserData() {
+            localStorage.setItem('mkin_current_user', JSON.stringify(currentUser));
+            let savedAccounts = JSON.parse(localStorage.getItem('mkin_db_accounts')) || {};
+            savedAccounts[currentUser.acc] = currentUser;
+            localStorage.setItem('mkin_db_accounts', JSON.stringify(savedAccounts));
+        }
+
+        function tradeCrypto(coin, price, action) {
+            const amountStr = prompt(`أدخل المبلغ بالدرهم (د.م) الذي تريد ${action === 'buy' ? 'الشراء به' : 'بيعه'}:`);
+            const moneyAmount = parseFloat(amountStr);
+
+            if (isNaN(moneyAmount) || moneyAmount <= 0) {
+                alert("المبلغ غير صحيح!");
+                return;
+            }
+
+            const coinQty = moneyAmount / price;
+
+            if (action === 'buy') {
+                if (currentUser.balance < moneyAmount) {
+                    alert("رصيدك البنكي غير كافٍ!");
+                    return;
+                }
+
+                currentUser.balance -= moneyAmount;
+                currentUser.cryptoWallet[coin] = (currentUser.cryptoWallet[coin] || 0) + coinQty;
+                currentUser.history.push({
+                    type: 'transfer',
+                    desc: `شراء عملات رقمية (${coin})`,
+                    amount: moneyAmount
+                });
+
+                alert(`تم شراء ${coinQty.toFixed(4)} من ${coin} بنجاح!`);
+
+            } else if (action === 'sell') {
+                if ((currentUser.cryptoWallet[coin] || 0) < coinQty) {
+                    alert(`أنت لا تملك كمية كافية من ${coin} لبيعها بهذا المبلغ!`);
+                    return;
+                }
+
+                currentUser.cryptoWallet[coin] -= coinQty;
+                currentUser.balance += moneyAmount;
+                currentUser.history.push({
+                    type: 'deposit',
+                    desc: `بيع عملات رقمية (${coin})`,
+                    amount: moneyAmount
+                });
+
+                alert(`تم بيع ${coinQty.toFixed(4)} من ${coin} وإضافة ${moneyAmount} د.م لرصيدك البنكي!`);
+            }
+
+            updateUI();
+        }
+    </script>
+</body>
+</html>
