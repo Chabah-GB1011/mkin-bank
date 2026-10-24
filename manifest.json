@@ -1,0 +1,15 @@
+{
+  "name": "Makeen Bank & Empire",
+  "short_name": "MakeenBank",
+  "start_url": "/mkin-bank/index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2830/2830284.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
